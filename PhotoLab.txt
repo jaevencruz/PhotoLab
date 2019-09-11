@@ -1,0 +1,19 @@
+For this lab, the PhotoLab was modified to support a dynamic data structure instead of an array with a pre-determined size.  Using dynamic memory allows for multiple image size, image rotations, and image resizing.  
+
+When creating the Image.c portion of the code, I followed the example of the student small assignment to make the CreateImage,DeleteImage,Get and Set Pixels.  It was a matter of calling specific elements in the IMAGE struct and returning them for each respective function (width,height,get/setpixel).
+
+In editing the FileIO.c portion, the main thing that was modified were the for loops in both Load and Save that called the array values.  I replaced the array calls with GetPixel functions in LoadImage and SetPixel in SaveImage.  Additionally, the conditions for a specific width and height in load image were removed.
+
+In the editing the original DIP functions, it was a matter of finding where the original RGB arrays were called and replacing them with calls to the RGB pointers of the IMAGE struct.  The implementation of this was not too difficult as it mainly consisted of replacing arrays with pointer calls.  
+
+The portion that took the most time to code were the new advanced DIP functions which were rotate,resize,and saturate.  
+
+For saturate, the formula provided in the slides was used for implementation.  The main bug that occurred while coding this function was that it returned an image with weirdly colored skies.  The problem was that my original implementation checked for the temporary values RT-GT-BT to be in range of 0-255.  I moved the value check to the last calculation and made sure that the values were unsigned chars.  After this was done, the saturate functioned properly.  
+
+For the resize, there were options for keeping the image the same size, shrinking, and enlarging.  For the same size, no modifications were done to the image and the function simply returned the input image.  For enlarging, a new temporary image was made with new widths and heights based on the ratio given on the slides.  A for loop iterating through the new, larger image was used and each pixel was set to a pixel in the original sized image.  To have pixels from the original image duplicated onto the bigger image, the index of the RGB for the original image was divided by the percent so that the same pixel could cover multiple pixels on the new image.  The shrinking of an image involved the creation of a temporary image with the new smaller dimensions.  To account for the lesser number of pixels in the new image, the average of multiple pixels were used to map to the new pixel in the new image. This part uses a for loop that iterates throught the new image and values xp1 and xp2.  These values were used to split the new image into sections and each section would correspond to multiple pixels in the orignal image.  Then the pixel in the new image was created by the average of multiple pixels.
+
+For the rotation, there was horizontal, vertical, and left, and right rotations.  The horizontal and vertical flipped images were created by using a temporary image with the same dimensions.  The index of the new image corresponded to opposite values of the old image (index of new image = 0 = index 600 in the old image).  The left and right rotations used a new image with flipped dimensions (width becomes height, height becomes width). Then the index of the pixel in the new image was mapped to pixels in the old image that was appropriate for the corresponding rotation.  
+
+The valgrind was helpful in checking whether the functions worked correctly.  If the program accessed memory it was not supposed to, valgrind indicated which function was causing the error and made for easier debugging. 
+
+The program has all functions working and with no valgrind errors.
